@@ -13,6 +13,7 @@ import com.afrain.lojaonline.domain.Cidade;
 import com.afrain.lojaonline.domain.Cliente;
 import com.afrain.lojaonline.domain.Endereco;
 import com.afrain.lojaonline.domain.Estado;
+import com.afrain.lojaonline.domain.ItemPedido;
 import com.afrain.lojaonline.domain.Pagamento;
 import com.afrain.lojaonline.domain.PagamentoComBoleto;
 import com.afrain.lojaonline.domain.PagamentoComCartao;
@@ -25,6 +26,7 @@ import com.afrain.lojaonline.repositories.CidadeRepository;
 import com.afrain.lojaonline.repositories.ClienteRepository;
 import com.afrain.lojaonline.repositories.EnderecoRepository;
 import com.afrain.lojaonline.repositories.EstadoRepository;
+import com.afrain.lojaonline.repositories.ItemPedidoRepository;
 import com.afrain.lojaonline.repositories.PagamentoRepository;
 import com.afrain.lojaonline.repositories.PedidoRepository;
 import com.afrain.lojaonline.repositories.ProdutoRepository;
@@ -48,6 +50,8 @@ public class LojaOnlineApplication implements CommandLineRunner {
 	private PedidoRepository pedidoRepository;
 	@Autowired
 	private PagamentoRepository pagamentoRepository;
+	@Autowired
+	private ItemPedidoRepository itemPedidoRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(LojaOnlineApplication.class, args);
@@ -112,6 +116,19 @@ public class LojaOnlineApplication implements CommandLineRunner {
 
 		pedidoRepository.saveAll(Arrays.asList(ped1, ped2));
 		pagamentoRepository.saveAll(Arrays.asList(pagto1, pagto2));
+		
+		ItemPedido ip1 = new ItemPedido(p1, ped1, 0, 1, 2000.00);
+		ItemPedido ip2 = new ItemPedido(p3, ped1, 0, 2, 80.00);
+		ItemPedido ip3 = new ItemPedido(p2, ped2, 100.00, 1, 800.00);
+		
+		ped1.getItens().addAll(Arrays.asList(ip1,ip2));
+		ped2.getItens().addAll(Arrays.asList(ip3));
+		
+		p1.getItens().addAll(Arrays.asList(ip1));
+		p2.getItens().addAll(Arrays.asList(ip3));
+		p3.getItens().addAll(Arrays.asList(ip3));
+		
+		itemPedidoRepository.saveAll(Arrays.asList(ip1,ip2,ip3));
 
 	}
 }
