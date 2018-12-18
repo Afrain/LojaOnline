@@ -3,10 +3,12 @@ package com.afrain.lojaonline.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.afrain.lojaonline.domain.Categoria;
 import com.afrain.lojaonline.repositories.CategoriaRepository;
+import com.afrain.lojaonline.services.exceptions.DataIntegrityException;
 import com.afrain.lojaonline.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -30,10 +32,14 @@ public class CategoriaService {
 		find(obj.getId());
 		return repo.save(obj);
 	}
-
-	public Categoria preparaObjCategoria(Categoria obj) {
-
-		return obj;
+	
+	public void delete(Integer id) {
+		find(id);
+		try {
+			repo.deleteById(id);
+		} catch (DataIntegrityViolationException e) {
+			throw new DataIntegrityException("Não é possível excluir uma Categoria que possui Produto!");
+		}
 	}
 
 }
