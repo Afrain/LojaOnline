@@ -6,13 +6,20 @@ import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.afrain.lojaonline.domain.Cliente;
 import com.afrain.lojaonline.domain.enums.TipoCliente;
 import com.afrain.lojaonline.dto.ClienteNewDTO;
+import com.afrain.lojaonline.repositories.ClienteRepository;
 import com.afrain.lojaonline.resources.exception.FieldMessage;
 import com.afrain.lojaonline.services.validation.utils.BR;
 
 public class ClienteInsertValidation implements ConstraintValidator<ClienteInsert, ClienteNewDTO> {
 
+	@Autowired
+	private ClienteRepository clienteRepository;
+	
 	@Override
 	public void initialize(ClienteInsert ann) {
 	}
@@ -29,6 +36,12 @@ public class ClienteInsertValidation implements ConstraintValidator<ClienteInser
 		if (objDto.getTipo().equals(TipoCliente.PESSOAJURIDICA.getCod()) && !BR.isValidCNPJ(objDto.getCpfOuCnpj())) {
 			list.add(new FieldMessage("CpfOuCnpj", "CNPJ inválido!"));
 		}
+		
+		Cliente aux = clienteRepository.findByEmail(objDto.getEmail());
+		if (aux != null) {
+			list.add(new FieldMessage("Email", "Email já existente"));
+		}
+		
 		
 		for (FieldMessage e : list) {
 			context.disableDefaultConstraintViolation();
