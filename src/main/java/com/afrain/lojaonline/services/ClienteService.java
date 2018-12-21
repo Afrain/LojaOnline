@@ -98,9 +98,6 @@ public class ClienteService {
 	private void updateCliente(Cliente newObj, Cliente obj) {
 		newObj.setNome(obj.getNome());
 		newObj.setEmail(obj.getEmail());
-		newObj.setTelefones(obj.getTelefones());
-		newObj.setEnderecos(obj.getEnderecos());
-		
 	}
 	
 }

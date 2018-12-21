@@ -19,7 +19,7 @@ public class ClienteInsertValidation implements ConstraintValidator<ClienteInser
 
 	@Autowired
 	private ClienteRepository clienteRepository;
-	
+
 	@Override
 	public void initialize(ClienteInsert ann) {
 	}
@@ -32,17 +32,25 @@ public class ClienteInsertValidation implements ConstraintValidator<ClienteInser
 		if (objDto.getTipo().equals(TipoCliente.PESSOAFISICA.getCod()) && !BR.isValidCPF(objDto.getCpfOuCnpj())) {
 			list.add(new FieldMessage("CpfOuCnpj", "CPF inválido!"));
 		}
-		
+
 		if (objDto.getTipo().equals(TipoCliente.PESSOAJURIDICA.getCod()) && !BR.isValidCNPJ(objDto.getCpfOuCnpj())) {
 			list.add(new FieldMessage("CpfOuCnpj", "CNPJ inválido!"));
 		}
-		
+
 		Cliente aux = clienteRepository.findByEmail(objDto.getEmail());
 		if (aux != null) {
 			list.add(new FieldMessage("Email", "Email já existente"));
 		}
+
+		Cliente aux2 = clienteRepository.findByCpfOuCnpj(objDto.getCpfOuCnpj());
+		if (aux2 != null && aux.getTipo().equals(TipoCliente.PESSOAFISICA)) {
+			list.add(new FieldMessage("CpfOuCnpj", "CPF já cadastrado!"));
+		}  
 		
-		
+		if (aux2 != null && aux.getTipo().equals(TipoCliente.PESSOAJURIDICA)) {
+			list.add(new FieldMessage("CpfOuCnpj", "CNPJ já cadastrado!"));
+		}
+
 		for (FieldMessage e : list) {
 			context.disableDefaultConstraintViolation();
 			context.buildConstraintViolationWithTemplate(e.getMessage()).addPropertyNode(e.getFieldName())
