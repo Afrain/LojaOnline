@@ -81,16 +81,16 @@ public class LojaOnlineApplication implements CommandLineRunner {
 		Produto p11 = new Produto(null, "Shampoo", 90.00);
 
 		cat1.getProdutos().addAll(Arrays.asList(p1, p2, p3));
-		cat2.getProdutos().addAll(Arrays.asList(p2,p4));
-		cat3.getProdutos().addAll(Arrays.asList(p5,p6));
-		cat4.getProdutos().addAll(Arrays.asList(p1,p2,p3,p7));
+		cat2.getProdutos().addAll(Arrays.asList(p2, p4));
+		cat3.getProdutos().addAll(Arrays.asList(p5, p6));
+		cat4.getProdutos().addAll(Arrays.asList(p1, p2, p3, p7));
 		cat5.getProdutos().addAll(Arrays.asList(p8));
-		cat6.getProdutos().addAll(Arrays.asList(p9,p10));
+		cat6.getProdutos().addAll(Arrays.asList(p9, p10));
 		cat7.getProdutos().addAll(Arrays.asList(p11));
 
-		p1.getCategorias().addAll(Arrays.asList(cat1,cat4));
-		p2.getCategorias().addAll(Arrays.asList(cat1, cat2,cat4));
-		p3.getCategorias().addAll(Arrays.asList(cat1,cat4));
+		p1.getCategorias().addAll(Arrays.asList(cat1, cat4));
+		p2.getCategorias().addAll(Arrays.asList(cat1, cat2, cat4));
+		p3.getCategorias().addAll(Arrays.asList(cat1, cat4));
 		p4.getCategorias().addAll(Arrays.asList(cat2));
 		p5.getCategorias().addAll(Arrays.asList(cat3));
 		p6.getCategorias().addAll(Arrays.asList(cat3));
@@ -144,9 +144,9 @@ public class LojaOnlineApplication implements CommandLineRunner {
 		pedidoRepository.saveAll(Arrays.asList(ped1, ped2));
 		pagamentoRepository.saveAll(Arrays.asList(pagto1, pagto2));
 
-		ItemPedido ip1 = new ItemPedido(p1, ped1, 0, 1, 2000.00);
-		ItemPedido ip2 = new ItemPedido(p3, ped1, 0, 2, 80.00);
-		ItemPedido ip3 = new ItemPedido(p2, ped2, 100.00, 1, 800.00);
+		ItemPedido ip1 = new ItemPedido(ped1, p1, 0, 1, 2000.00);
+		ItemPedido ip2 = new ItemPedido(ped1, p3, 0, 2, 80.00);
+		ItemPedido ip3 = new ItemPedido(ped2, p2, 100.00, 1, 800.00);
 
 		ped1.getItens().addAll(Arrays.asList(ip1, ip2));
 		ped2.getItens().addAll(Arrays.asList(ip3));
