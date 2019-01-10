@@ -14,7 +14,7 @@ import com.afrain.lojaonline.services.SmtpEmailService;
 
 @Configuration
 @Profile("dev")
-public class DevConfig2 {
+public class DevConfig {
 
 	@Autowired
 	private DBService dbService;

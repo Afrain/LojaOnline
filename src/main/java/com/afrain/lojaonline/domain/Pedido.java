@@ -60,7 +60,7 @@ public class Pedido implements Serializable {
 
 	}
 	
-	public double getTotal() {
+	public double getValorTotal() {
 		double total = 0.0;
 		for (ItemPedido x : itens) {
 			total += x.getSubTotal();
@@ -159,7 +159,7 @@ public class Pedido implements Serializable {
 			builder.append(ip.toString());
 		}
 		builder.append("\nValor Total: ");
-		builder.append(nf.format(getTotal()));
+		builder.append(nf.format(getValorTotal()));
 		return builder.toString();
 	}
 
