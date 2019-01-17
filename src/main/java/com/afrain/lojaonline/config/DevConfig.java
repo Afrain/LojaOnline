@@ -28,8 +28,8 @@ public class DevConfig {
 		if (!"create".equals(strategy)) {
 			return false;
 		}
+		
 		dbService.instaciaDataBase();
-
 		return true;
 	}
 	
