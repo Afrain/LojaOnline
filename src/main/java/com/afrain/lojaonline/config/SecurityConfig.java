@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -19,10 +20,12 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.afrain.lojaonline.security.JWTFiltroAutenticacao;
+import com.afrain.lojaonline.security.JWTFiltroAutorizacao;
 import com.afrain.lojaonline.security.JWTUtil;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
@@ -40,7 +43,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	private static final String[] CAMINHO_PUBLICO_GET = { 
 			"/produtos/**", 
-			"/categorias/**" };
+			"/categorias/**" 
+			};
+	
+	private static final String[] CAMINHO_PUBLICO_POST = {  
+			"/categorias/**" 
+			};
+	
+	private static final String[] CAMINHO_PUBLICO_PUT = {  
+			"/categorias/**" 
+			};
+	
+	private static final String[] CAMINHO_PUBLICO_DELETE = {  
+			"/categorias/**" 
+			};
 	
 	protected void configure(HttpSecurity http) throws Exception {
 		
@@ -52,8 +68,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests()
 		.antMatchers(CAMINHO_PUBLICO).permitAll()
 		.antMatchers(HttpMethod.GET, CAMINHO_PUBLICO_GET).permitAll()
+		.antMatchers(HttpMethod.POST, CAMINHO_PUBLICO_POST).permitAll()
+		.antMatchers(HttpMethod.PUT, CAMINHO_PUBLICO_PUT).permitAll()
+		.antMatchers(HttpMethod.DELETE, CAMINHO_PUBLICO_DELETE).permitAll()
 		.anyRequest().authenticated();
 		http.addFilter(new JWTFiltroAutenticacao(authenticationManager(), jwtUtil));
+		http.addFilter(new JWTFiltroAutorizacao(authenticationManager(), jwtUtil, userDetailsService));
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 	
