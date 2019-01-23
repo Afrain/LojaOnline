@@ -7,7 +7,7 @@ import com.afrain.lojaonline.security.UserSS;
 public class UserService {
 
 	//RETORNA USUARIO LOGADO
-	public static UserSS usuarioLogado() {
+	public static UserSS retornaUsuarioLogado() {
 		try {
 			return (UserSS) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		} catch (Exception e) {

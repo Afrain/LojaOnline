@@ -44,7 +44,7 @@ public class ClienteService {
 	
 	public Cliente find(Integer id) {
 	
-		UserSS usuario = UserService.usuarioLogado();
+		UserSS usuario = UserService.retornaUsuarioLogado();
 		if (usuario == null || !usuario.hasRole(Perfil.ADMIN) && !id.equals(usuario.getId())) {
 			throw new AuthorizationException("Acesso Negado!");
 		}
