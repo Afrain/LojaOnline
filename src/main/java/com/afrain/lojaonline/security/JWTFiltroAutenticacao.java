@@ -38,7 +38,7 @@ public class JWTFiltroAutenticacao extends UsernamePasswordAuthenticationFilter 
 			UsernamePasswordAuthenticationToken autencicacaoToken = new UsernamePasswordAuthenticationToken(
 					credDTO.getEmail(), credDTO.getSenha(), new ArrayList<>());
 			
-			// VERIFICA SE USUARIOE SENHA SAO VALIDOS
+			// VERIFICA SE USUARIO E SENHA SAO VALIDOS
 			Authentication autenticacao = authenticationManager.authenticate(autencicacaoToken); 
 			return autenticacao;
 
