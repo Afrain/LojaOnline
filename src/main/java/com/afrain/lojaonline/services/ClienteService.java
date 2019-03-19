@@ -1,10 +1,12 @@
 package com.afrain.lojaonline.services;
 
+import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,20 +42,26 @@ public class ClienteService {
 
 	@Autowired
 	private CidadeRepository cidadeRepository;
-	
+
 	@Autowired
 	private BCryptPasswordEncoder cryptSenha;
-	
+
 	@Autowired
 	private S3Service s3Service;
-	
+
+	@Autowired
+	private ImageService imageService;
+
+	@Value("${img.prefix.client.profile}")
+	private String prefix;
+
 	public Cliente find(Integer id) {
-	
+
 		UserSS usuario = UserService.retornaUsuarioLogado();
 		if (usuario == null || !usuario.hasRole(Perfil.ADMIN) && !id.equals(usuario.getId())) {
 			throw new AuthorizationException("Acesso Negado!");
 		}
-		
+
 		Optional<Cliente> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));
@@ -100,14 +108,14 @@ public class ClienteService {
 		Cliente cli = new Cliente(null, objNewDTO.getNome(), objNewDTO.getEmail(), objNewDTO.getCpfOuCnpj(),
 				TipoCliente.toEnum(objNewDTO.getTipo()), cryptSenha.encode(objNewDTO.getSenha()));
 		Cidade cid = cidadeRepository.findAll().get(objNewDTO.getCidadeId());
-		Endereco end = new Endereco(null, objNewDTO.getLogradouro(), objNewDTO.getNumero(), objNewDTO.getComplemento(), 
+		Endereco end = new Endereco(null, objNewDTO.getLogradouro(), objNewDTO.getNumero(), objNewDTO.getComplemento(),
 				objNewDTO.getBairro(), objNewDTO.getCep(), cli, cid);
 		cli.getEnderecos().add(end);
 		cli.getTelefones().add(objNewDTO.getTelefone1());
-		if(objNewDTO.getTelefone2() != null) {
+		if (objNewDTO.getTelefone2() != null) {
 			cli.getTelefones().add(objNewDTO.getTelefone2());
 		}
-		if(objNewDTO.getTelefone3() != null) {
+		if (objNewDTO.getTelefone3() != null) {
 			cli.getTelefones().add(objNewDTO.getTelefone3());
 		}
 
@@ -118,19 +126,19 @@ public class ClienteService {
 		newObj.setNome(obj.getNome());
 		newObj.setEmail(obj.getEmail());
 	}
-	
+
 	public URI uploadProfilePicture(MultipartFile multipartFile) {
-		
+
 		UserSS usuario = UserService.retornaUsuarioLogado();
 		if (usuario == null) {
 			throw new AuthorizationException("Acesso negado!");
 		}
-		
-		URI uri = s3Service.uploadFile(multipartFile);
-		Cliente cli = find(usuario.getId());
-		cli.setUrlImage(uri.toString());
-		repo.save(cli);
-		return uri;
+
+		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
+		String fileName = prefix + usuario.getId() + ".jpg";
+
+		return s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
+//		return s3Service.uploadFile(multipartFile);
 	}
-	
+
 }

@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.afrain.lojaonline.services.exceptions.FileException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 
@@ -33,14 +32,14 @@ public class S3Service {
 			String fileName = multipartFile.getOriginalFilename();// PEGA O NOME DO ARQUIVO
 			InputStream is = multipartFile.getInputStream();
 			String contentType = multipartFile.getContentType();// TIPO DE ARQUIVO ENVIADO EX. IMG, TEXTO, ETC.
-			return uploadFile(fileName, is, contentType);
+			return uploadFile(is, fileName, contentType);
 		} catch (IOException e) {
-			throw new FileException("Erro de ID: " + e.getMessage());
+			throw new RuntimeException("Erro de ID: " + e.getMessage());
 		}
 
 	}
 
-	public URI uploadFile(String fileName, InputStream is, String contentType) {
+	public URI uploadFile(InputStream is, String fileName, String contentType) {
 		try {
 			ObjectMetadata meta = new ObjectMetadata();
 			meta.setContentType(contentType);
@@ -50,7 +49,7 @@ public class S3Service {
 
 			return s3client.getUrl(bucketName, fileName).toURI();
 		} catch (URISyntaxException e) {
-			throw new FileException("Erro ao converter URL par URI! ");
+			throw new RuntimeException("Erro ao converter URL par URI! ");
 		}
 	}
 

@@ -86,7 +86,7 @@ public class ClienteResources {
 	}
 	
 	@RequestMapping(value="/picture",method = RequestMethod.POST)
-	public ResponseEntity<Void> updateProfilePicture(MultipartFile file) {
+	public ResponseEntity<Void> updateProfilePicture(@RequestParam(name="file") MultipartFile file) {
 		URI uri = service.uploadProfilePicture(file);
 		return ResponseEntity.created(uri).build();
 
