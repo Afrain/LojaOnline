@@ -10,6 +10,7 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FilenameUtils;
+import org.imgscalr.Scalr;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,6 +38,7 @@ public class ImageService {
 
 	}
 
+	//CONVERTE IMAGEM PNG P/ JPG
 	public BufferedImage pngToJpg(BufferedImage img) {
 		BufferedImage jpgImage = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_RGB);
 		jpgImage.createGraphics().drawImage(img, 0, 0, Color.WHITE, null);
@@ -53,6 +55,21 @@ public class ImageService {
 			throw new FileException("ERRO: Erro ao ler arquivo!");
 		}
 
+	}
+	
+	//RECORTA IMAGEM
+	public BufferedImage cropSquare(BufferedImage img) {
+		int min = (img.getHeight() <= img.getWidth() ? img.getHeight() : img.getWidth());
+		return Scalr.crop(
+				img, 
+				(img.getWidth()/2) - (min/2),
+				(img.getHeight()/2) - (min/2), 
+				min,
+				min);
+	}
+	
+	public BufferedImage resize(BufferedImage img, int size) {
+		return Scalr.resize(img, Scalr.Method.ULTRA_QUALITY, size);
 	}
 
 }
