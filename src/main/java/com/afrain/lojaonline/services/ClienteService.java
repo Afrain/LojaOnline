@@ -60,8 +60,8 @@ public class ClienteService {
 
 	public Cliente find(Integer id) {
 
-		UserSS usuario = UserService.retornaUsuarioLogado();
-		if (usuario == null || !usuario.hasRole(Perfil.ADMIN) && !id.equals(usuario.getId())) {
+		UserSS usuarioLogado = UserService.retornaUsuarioLogado();
+		if (usuarioLogado == null || !usuarioLogado.hasRole(Perfil.ADMIN) && !id.equals(usuarioLogado.getId())) {
 			throw new AuthorizationException("Acesso Negado!");
 		}
 
@@ -96,6 +96,21 @@ public class ClienteService {
 	public List<Cliente> findAll() {
 		return repo.findAll();
 
+	}
+	
+	public Cliente findByEmail(String email) {
+		UserSS usuarioLogado = UserService.retornaUsuarioLogado();
+		if (usuarioLogado == null || !usuarioLogado.hasRole(Perfil.ADMIN) && !email.equals(usuarioLogado.getUsername())) {
+			throw new AuthorizationException("Acesso negado!");
+		}
+		
+		Cliente obj = repo.findByEmail(email);
+		if (obj == null) {
+			throw new ObjectNotFoundException(
+					"Objeto não encontrado! Id: " + usuarioLogado.getId() + ", Tipo: " + Cliente.class.getName());
+		}
+		return obj;
+		
 	}
 
 	public Page<Cliente> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
@@ -144,7 +159,6 @@ public class ClienteService {
 		String fileName = prefix + usuario.getId() + ".jpg";
 
 		return s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
-//		return s3Service.uploadFile(multipartFile);
 	}
 
 }
