@@ -43,7 +43,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	private static final String[] CAMINHO_PUBLICO_GET = { 
 			"/produtos/**", 
-			"/categorias/**" 
+			"/categorias/**",
+			"/estados/**",
+			"/cidades/**"
 			};
 	
 	private static final String[] CAMINHO_PUBLICO_POST = {  
