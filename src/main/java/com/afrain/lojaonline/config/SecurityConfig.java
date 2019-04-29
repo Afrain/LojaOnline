@@ -27,75 +27,75 @@ import com.afrain.lojaonline.security.JWTUtil;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	
+
 	@Autowired
 	private Environment environment;
-	
+
 	@Autowired
 	private UserDetailsService userDetailsService;
-	
+
 	@Autowired
 	private JWTUtil jwtUtil;
 
 	private static final String[] CAMINHO_PUBLICO = { 
-			"/h2-console/**"
+			"/h2-console/**" 
 			};
-	
+
 	private static final String[] CAMINHO_PUBLICO_GET = { 
 			"/produtos/**", 
-			"/categorias/**",
+			"/categorias/**", 
 			"/estados/**",
-			"/cidades/**"
+			"/cidades/**" 
 			};
-	
-	private static final String[] CAMINHO_PUBLICO_POST = {  
-			"/clientes",
-			"/auth/recupera_senha/**"
+
+	private static final String[] CAMINHO_PUBLICO_POST = { 
+			"/clientes", 
+			"/auth/recupera_senha/**" 
 			};
-	
-	private static final String[] CAMINHO_PUBLICO_PUT = {  
+
+	private static final String[] CAMINHO_PUBLICO_PUT = { 
 			"/categorias/**" 
 			};
-	
-	private static final String[] CAMINHO_PUBLICO_DELETE = {  
+
+	private static final String[] CAMINHO_PUBLICO_DELETE = { 
 			"/categorias/**" 
 			};
-	
+
 	protected void configure(HttpSecurity http) throws Exception {
-		
+
 		if (Arrays.asList(environment.getActiveProfiles()).contains("test")) {
 			http.headers().frameOptions().disable();
 		}
-		
+
 		http.cors().and().csrf().disable();
-		http.authorizeRequests()
-		.antMatchers(CAMINHO_PUBLICO).permitAll()
-		.antMatchers(HttpMethod.GET, CAMINHO_PUBLICO_GET).permitAll()
-		.antMatchers(HttpMethod.POST, CAMINHO_PUBLICO_POST).permitAll()
-		.antMatchers(HttpMethod.PUT, CAMINHO_PUBLICO_PUT).permitAll()
-		.antMatchers(HttpMethod.DELETE, CAMINHO_PUBLICO_DELETE).permitAll()
-		.anyRequest().authenticated();
+		http.authorizeRequests().antMatchers(CAMINHO_PUBLICO).permitAll()
+				.antMatchers(HttpMethod.GET, CAMINHO_PUBLICO_GET).permitAll()
+				.antMatchers(HttpMethod.POST, CAMINHO_PUBLICO_POST).permitAll()
+				.antMatchers(HttpMethod.PUT, CAMINHO_PUBLICO_PUT).permitAll()
+				.antMatchers(HttpMethod.DELETE, CAMINHO_PUBLICO_DELETE).permitAll().anyRequest().authenticated();
 		http.addFilter(new JWTFiltroAutenticacao(authenticationManager(), jwtUtil));
 		http.addFilter(new JWTFiltroAutorizacao(authenticationManager(), jwtUtil, userDetailsService));
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
-	
+
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
 	}
 
-	//CONFIGURACAO DO H2-CONSOLE
+	// CONFIGURACAO DO H2-CONSOLE
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
+		configuration.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "OPTIONS"));
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
-	
+
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 }
